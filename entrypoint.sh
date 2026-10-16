@@ -23,6 +23,13 @@ done
 if ! getent group "$SSH_GID" >/dev/null 2>&1; then
   groupadd -g "$SSH_GID" "$SSH_USERNAME" 2>/dev/null || true
 fi
+OCCUPANT=$(getent passwd "$SSH_UID" | cut -d: -f1 || true)
+if [ -n "$OCCUPANT" ] && [ "$OCCUPANT" != "$SSH_USERNAME" ]; then
+  userdel "$OCCUPANT" 2>/dev/null || true
+fi
+if ! getent group "$SSH_GID" >/dev/null 2>&1; then
+  groupadd -g "$SSH_GID" "$SSH_USERNAME" 2>/dev/null || true
+fi
 useradd -c "DOCKER_MANAGED" -s /bin/bash -u "$SSH_UID" -g "$SSH_GID" -d "/home/$SSH_USERNAME" "$SSH_USERNAME"
 
 echo "$SSH_USERNAME:$SSH_PASSWORD" | chpasswd
