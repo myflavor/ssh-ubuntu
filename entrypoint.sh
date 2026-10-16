@@ -30,13 +30,8 @@ echo "$SSH_USERNAME:$SSH_PASSWORD" | chpasswd
 echo "$SSH_USERNAME ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/$SSH_USERNAME"
 chmod 440 "/etc/sudoers.d/$SSH_USERNAME"
 
-mkdir -p /etc/ssh/keys /run/sshd
-if [ -n "$(ls -A /etc/ssh/keys 2>/dev/null)" ]; then
-  cp /etc/ssh/keys/ssh_host_* /etc/ssh/
-else
-  ssh-keygen -A
-  cp /etc/ssh/ssh_host_* /etc/ssh/keys/
-fi
+mkdir -p /run/sshd
+ssh-keygen -A
 chmod 600 /etc/ssh/ssh_host_*_key
 chmod 644 /etc/ssh/ssh_host_*_key.pub
 
